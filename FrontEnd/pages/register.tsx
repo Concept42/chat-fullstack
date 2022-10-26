@@ -2,6 +2,8 @@ import { NextPage } from "next";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "../lib/formValidation";
+import axios from "axios";
+import { registerRoute } from "../lib/APIRoutes";
 
 interface FormInputs {
   username: string;
@@ -19,13 +21,20 @@ const Register: NextPage = () => {
     resolver: yupResolver(registerSchema),
   });
 
-  const onSubmit = handleSubmit((data) => console.log(data));
+  const onSubmit = handleSubmit(async (data) => {
+    const { username, email, password } = data;
+    const submitData = await axios.post(registerRoute, {
+      username,
+      email,
+      password,
+    });
+  });
 
   return (
     <div className="flex justify-center items-center w-screen h-screen bg-accent ">
-      <div className="flex flex-col justify-around items-center bg-white rounded-xl shadow-xl w-[25%] h-fit py-5  ">
+      <div className="flex flex-col  items-center bg-white rounded-xl shadow-xl w-[25%] h-fit py-10 ">
         <h1 className="text-4xl text-accent font-bold">Sign up</h1>
-        <div className="flex flex-col gap-4 w-full px-20 py-10 text-black ">
+        <div className="flex flex-col gap-8 w-full px-20 py-10 text-black ">
           <div>
             <input
               className={
@@ -91,10 +100,14 @@ const Register: NextPage = () => {
         </div>
         <button
           onClick={onSubmit}
-          className="btn btn-accent border-2 rounded-2xl px-10"
+          className="btn btn-accent border-2 rounded-2xl px-20"
         >
           Register
         </button>
+        <div className="flex flex-col justify-center items-center">
+          <h3 className="mt-5 text-black">ALREADY HAVE AN ACCOUNT? </h3>
+          <h3 className="text-accent cursor-pointer">LOGIN</h3>
+        </div>
       </div>
     </div>
   );
