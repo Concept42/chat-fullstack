@@ -1,21 +1,18 @@
-const express = require("express");
-const cors = require("cors");
-const mongooose = require("mongoose");
+const express = require('express')
+const cors = require('cors')
+const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
+const userRoutes = require('./routes/userRoutes')
 
-const app = express();
-require("dotenv").config();
+const app = express()
+require('dotenv').config()
 
-app.use(cors());
-app.use(express.json());
+app.use(cors())
+app.use(bodyParser.json())
+app.use('/api/auth', userRoutes)
 
-mongooose
-  .connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Db Connection successful"))
-  .catch((err) => console.log(err.message));
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true }, () =>
+  console.log('connected to the db'),
+)
 
-const server = app.listen(process.env.PORT, () =>
-  console.log(`Server started on Port ${process.env.PORT}`)
-);
+app.listen(process.env.PORT, () => console.log(`Server started on Port ${process.env.PORT}`))
