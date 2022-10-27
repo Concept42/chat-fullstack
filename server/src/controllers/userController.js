@@ -28,3 +28,8 @@ module.exports.register = async (req, res, next) => {
     next(err)
   }
 }
+
+module.exports.getUsers = async (req, res) => {
+  const users = await User.find()
+  res.json(users)
+}
