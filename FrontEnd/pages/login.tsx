@@ -1,12 +1,13 @@
 import { NextPage } from 'next'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { registerSchema } from '../lib/formValidation'
+import { loginSchema } from '../lib/formValidation'
 import axios, { AxiosResponse } from 'axios'
 import { loginRoute } from '../lib/APIRoutes'
 import { useRouter } from 'next/router'
 import toast, { Toaster } from 'react-hot-toast'
 import Link from 'next/link'
+import { useEffect } from 'react'
 
 interface Login {
   email: string
@@ -20,21 +21,28 @@ const Login: NextPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<Login>({
-    resolver: yupResolver(registerSchema),
+    resolver: yupResolver(loginSchema),
   })
+
+  useEffect(() => {
+    if (localStorage.getItem('logged-user')) {
+      router.push('/')
+    }
+  }, [router])
 
   const loginUser = handleSubmit(async (data) => {
     try {
-      // const { email, password } = data
+      const { email, password } = data
       const userData = await axios.post(loginRoute, {
-        email: data.email,
-        password: data.password,
+        email: email,
+        password: password,
       })
       console.log(userData)
       if (userData.data.status === false) {
         console.log(userData.data.status.msg)
         toast.error(userData.data.msg)
       } else {
+        localStorage.setItem('logged-user', JSON.stringify(userData.data))
         router.push('/')
       }
     } catch (err) {

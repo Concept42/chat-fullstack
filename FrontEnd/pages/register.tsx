@@ -7,6 +7,7 @@ import { registerRoute } from '../lib/APIRoutes'
 import { useRouter } from 'next/router'
 import toast, { Toaster } from 'react-hot-toast'
 import Link from 'next/link'
+import { useEffect } from 'react'
 
 interface FormInputs {
   username: string
@@ -31,6 +32,12 @@ const Register: NextPage = () => {
     resolver: yupResolver(registerSchema),
   })
 
+  useEffect(() => {
+    if (localStorage.getItem('registered-user')) {
+      router.push('/')
+    }
+  }, [router])
+
   const onSubmit = handleSubmit(async (data) => {
     try {
       const { username, email, password } = data
@@ -44,6 +51,7 @@ const Register: NextPage = () => {
         console.log(userData.data.status.msg)
         toast.error(userData.data.msg)
       } else {
+        localStorage.setItem('registered-user', JSON.stringify(userData.data))
         router.push('/')
       }
     } catch (err) {
