@@ -37,7 +37,7 @@ const Login: NextPage = () => {
         email: email,
         password: password,
       })
-      console.log(userData)
+
       if (userData.data.status === false) {
         console.log(userData.data.status.msg)
         toast.error(userData.data.msg)
