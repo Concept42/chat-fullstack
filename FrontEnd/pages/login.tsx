@@ -8,11 +8,7 @@ import { useRouter } from 'next/router'
 import toast, { Toaster } from 'react-hot-toast'
 import Link from 'next/link'
 import { useEffect } from 'react'
-
-interface Login {
-  email: string
-  password: string
-}
+import type { Login } from '../lib/Types'
 
 const Login: NextPage = () => {
   const router = useRouter()
@@ -25,8 +21,12 @@ const Login: NextPage = () => {
   })
 
   useEffect(() => {
-    if (localStorage.getItem('logged-user')) {
-      router.push('/')
+    const localUser = localStorage.getItem('logged-user')
+    if (typeof localUser === 'string') {
+      if (localUser) {
+        router.push('/')
+        const parse = JSON.parse(localUser)
+      }
     }
   }, [router])
 
@@ -51,7 +51,7 @@ const Login: NextPage = () => {
   })
 
   return (
-    <div className='flex justify-center items-center w-screen h-screen bg-accent '>
+    <div className='flex justify-center items-center w-screen h-screen bg-base-100 '>
       <Toaster />
 
       <div className='flex flex-col  items-center bg-white rounded-xl shadow-xl min-w-[300px] max-w-[300] md:min-w-[500px] h-fit py-10 '>

@@ -3,56 +3,49 @@ import axios from 'axios'
 import Image from 'next/image'
 import { NextPage } from 'next'
 import { setAvatarRoute } from '../lib/APIRoutes'
-import { userAgent } from 'next/server'
 import { useRouter } from 'next/router'
-import { parse } from 'path'
+import { randomImages } from '../lib/Data'
 
-interface Image {
-  id: string
-  author: string
-  download_url: string
-  height: number
-  width: number
-  url: string
-}
 const SetAvatar: NextPage = () => {
-  const [randomAvatars, setRandomAvatars] = useState<Image[]>([])
-  const [selectedAvatar, setSelectedAvatar] = useState(0)
+  const [randomAvatars, setRandomAvatars] = useState<string[]>([])
+  const [selectedAvatar, setSelectedAvatar] = useState<number>(0)
 
   const router = useRouter()
 
-  const api = 'https://picsum.photos/v2/list?limit=4'
+  const showRandomAvatar = () => {
+    const randomAvatarImages: string[] = []
+    for (let i = 0; i < 4; i++) {
+      const randomIndex = Math.round(Math.random() * 14 + 1)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const image = await axios.get(api)
-      setRandomAvatars(image.data)
+      randomAvatarImages.push(randomImages.slice(randomIndex - 1, randomIndex).toString())
     }
-
-    fetchData()
-  }, [])
+    setRandomAvatars(randomAvatarImages)
+  }
 
   useEffect(() => {
     const localUser = localStorage.getItem('logged-user')
+    if (!localUser) {
+      router.push('/login')
+    }
     if (typeof localUser === 'string') {
       const parse = JSON.parse(localUser)
       if (parse.isAvatarImageSet === true) {
         router.push('/')
       }
     }
-    if (!localUser) {
-      router.push('/login')
-    }
   }, [router])
+
+  useEffect(() => {
+    showRandomAvatar()
+  }, [])
 
   const setAvatar = async () => {
     const localUser = localStorage.getItem('logged-user')
     if (typeof localUser === 'string') {
       const parse = JSON.parse(localUser)
       const { data } = await axios.post(`${setAvatarRoute}/${parse._id}`, {
-        image: randomAvatars[selectedAvatar].url,
+        image: randomAvatars[selectedAvatar],
       })
-
       if (data.isSet) {
         parse.isAvatarImageSet = true
         parse.avatarImage = data.image
@@ -63,16 +56,17 @@ const SetAvatar: NextPage = () => {
   }
 
   return (
-    <div className='flex flex-col gap-10 w-screen h-screen justify-center items-center bg-accent'>
+    <div className='flex flex-col gap-10 w-screen h-screen justify-center items-center bg-base-100'>
       <h1 className='text-4xl text-black font-bold'>Pick your avatar</h1>
+      <button onClick={showRandomAvatar}>Random</button>
       <ul className='flex gap-10 '>
         {randomAvatars?.map((avatar, index) => {
           return (
             <li
               className={
                 selectedAvatar === index
-                  ? 'flex justify-center items-center w-[202px] h-[136px] border-[5px] border-red-800 '
-                  : 'flex justify-center items-center w-[202px] h-[136px] border-2 border-gray-800 '
+                  ? 'flex justify-center items-center w-[200px] h-[200px] border-[5px] border-red-800 relative '
+                  : 'flex justify-center items-center w-[200px] h-[200px] border-2 border-gray-800 relative '
               }
               key={index}
             >
@@ -82,9 +76,8 @@ const SetAvatar: NextPage = () => {
                     setSelectedAvatar(index)
                     console.log(selectedAvatar)
                   }}
-                  src={avatar.download_url}
-                  width={200}
-                  height={200}
+                  src={avatar}
+                  fill
                   alt='avatar'
                 />
               }

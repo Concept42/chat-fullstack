@@ -8,13 +8,7 @@ import { useRouter } from 'next/router'
 import toast, { Toaster } from 'react-hot-toast'
 import Link from 'next/link'
 import { useEffect } from 'react'
-
-interface FormInputs {
-  username: string
-  email: string
-  password: string
-  confirmPassword: string
-}
+import type { FormInputs } from '../lib/Types'
 
 const Register: NextPage = () => {
   const toastOptions = {
@@ -31,12 +25,6 @@ const Register: NextPage = () => {
   } = useForm<FormInputs>({
     resolver: yupResolver(registerSchema),
   })
-
-  useEffect(() => {
-    if (localStorage.getItem('registered-user')) {
-      router.push('/')
-    }
-  }, [router])
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -60,7 +48,7 @@ const Register: NextPage = () => {
   })
 
   return (
-    <div className='flex justify-center items-center w-screen h-screen bg-accent '>
+    <div className='flex justify-center items-center w-screen h-screen bg-base-100 '>
       <Toaster />
 
       <div className='flex flex-col  items-center bg-white rounded-xl shadow-xl min-w-[300px] max-w-[300] md:min-w-[500px] h-fit py-10 '>
