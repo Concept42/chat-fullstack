@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 
 interface Props {
   contacts: Contact[]
-  currentUser: User | undefined
+  currentUser: User
   changeChat: (chat: Contact) => void
 }
 

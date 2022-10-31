@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
-import { allUsersRoute } from '../lib/APIRoutes'
+import { allUsersRoute, host } from '../lib/APIRoutes'
 import type { Contact, User } from '../lib/Types'
 import Contacts from '../components/Contacts'
 import Welcome from '../components/Welcome'
 import ChatBox from '../components/ChatBox'
+import { io } from 'socket.io-client'
 
 export default function Home() {
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -13,6 +14,7 @@ export default function Home() {
   const [currentChat, setCurrentChat] = useState<Contact>()
 
   const router = useRouter()
+  const socket = useRef<any>()
 
   useEffect(() => {
     const localUser = localStorage.getItem('logged-user')
@@ -32,6 +34,12 @@ export default function Home() {
     }
   }, [router])
 
+  useEffect(() => {
+    if (currentUser) {
+      socket.current = io(host)
+      socket.current.emit('add-user', currentUser._id)
+    }
+  })
   useEffect(() => {
     const getAllUsers = async () => {
       const data = await axios.get(`${allUsersRoute}/${currentUser._id}`)
@@ -54,7 +62,7 @@ export default function Home() {
         {!currentChat ? (
           <Welcome currentUser={currentUser} />
         ) : (
-          <ChatBox currentChat={currentChat} currentUser={currentUser} />
+          <ChatBox currentChat={currentChat} currentUser={currentUser} socket={socket} />
         )}
       </div>
     </div>

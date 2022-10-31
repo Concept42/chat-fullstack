@@ -4,15 +4,15 @@ export interface Contact {
   _id: string
   username: string
   email: string
-  avatarImage: string
+  avatarImage: string | StaticImageData
 }
 export interface User {
-  _id?: string
-  username?: string
-  password?: string
-  email?: string
-  isAvatarImageSet?: boolean
-  avatarImage?: string | StaticImageData
+  _id: string
+  username: string
+  password: string
+  email: string
+  isAvatarImageSet: boolean
+  avatarImage: string | StaticImageData
 }
 
 export interface Login {
