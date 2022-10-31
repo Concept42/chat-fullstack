@@ -7,7 +7,6 @@ import { registerRoute } from '../lib/APIRoutes'
 import { useRouter } from 'next/router'
 import toast, { Toaster } from 'react-hot-toast'
 import Link from 'next/link'
-import { useEffect } from 'react'
 import type { FormInputs } from '../lib/Types'
 
 const Register: NextPage = () => {
@@ -34,16 +33,16 @@ const Register: NextPage = () => {
         email,
         password,
       })
-      console.log(userData)
+      
       if (userData.data.status === false) {
-        console.log(userData.data.status.msg)
+      
         toast.error(userData.data.msg)
       } else {
         localStorage.setItem('registered-user', JSON.stringify(userData.data))
         router.push('/')
       }
     } catch (err) {
-      console.log(err)
+      
     }
   })
 

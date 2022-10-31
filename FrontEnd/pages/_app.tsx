@@ -6,7 +6,6 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const localUser = localStorage.getItem('logged-user')
-      console.log(localUser)
     }
   })
   return <Component {...pageProps} />

@@ -39,14 +39,14 @@ const Login: NextPage = () => {
       })
 
       if (userData.data.status === false) {
-        console.log(userData.data.status.msg)
+        
         toast.error(userData.data.msg)
       } else {
         localStorage.setItem('logged-user', JSON.stringify(userData.data))
         router.push('/')
       }
     } catch (err) {
-      console.log(err)
+      
     }
   })
 

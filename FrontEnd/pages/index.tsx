@@ -10,12 +10,20 @@ import { io } from 'socket.io-client'
 
 export default function Home() {
   const [contacts, setContacts] = useState<Contact[]>([])
-  const [currentUser, setCurrentUser] = useState<User>({})
+  const [currentUser, setCurrentUser] = useState<User>({
+    _id: '',
+    username: '',
+    password: '',
+    email: '',
+    isAvatarImageSet: false,
+    avatarImage: '',
+  })
   const [currentChat, setCurrentChat] = useState<Contact>()
+  const [currentSelected, setCurrentSelected] = useState<number | null>(null)
 
   const router = useRouter()
   const socket = useRef<any>()
-
+  console.log(currentUser)
   useEffect(() => {
     const localUser = localStorage.getItem('logged-user')
     const setLoggedUser = async () => {
@@ -42,7 +50,7 @@ export default function Home() {
   })
   useEffect(() => {
     const getAllUsers = async () => {
-      const data = await axios.get(`${allUsersRoute}/${currentUser._id}`)
+      const data = await axios.get(`${allUsersRoute}/${currentUser?._id}`)
       setContacts(data.data)
     }
     if (currentUser?.isAvatarImageSet) {
@@ -52,17 +60,28 @@ export default function Home() {
 
   const handleChatChage = (chat: Contact) => {
     setCurrentChat(chat)
-    console.log(currentChat)
   }
 
   return (
     <div className='w-screen h-screen flex flex-col justify-center items-center mx-auto'>
       <div className='container h-[85vh] bg-neutral grid grid-cols-[25%,75%] md:grid-cols-[35%,65%] '>
-        <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChage} />
+        <Contacts
+          currentSelected={currentSelected}
+          setCurrentSelected={setCurrentSelected}
+          contacts={contacts}
+          currentUser={currentUser}
+          changeChat={handleChatChage}
+        />
         {!currentChat ? (
           <Welcome currentUser={currentUser} />
         ) : (
-          <ChatBox currentChat={currentChat} currentUser={currentUser} socket={socket} />
+          <ChatBox
+            currentSelected={currentSelected}
+            setCurrentSelected={setCurrentSelected}
+            currentChat={currentChat}
+            currentUser={currentUser}
+            socket={socket}
+          />
         )}
       </div>
     </div>

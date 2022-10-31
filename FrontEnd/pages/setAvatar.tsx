@@ -74,7 +74,7 @@ const SetAvatar: NextPage = () => {
                 <Image
                   onClick={() => {
                     setSelectedAvatar(index)
-                    console.log(selectedAvatar)
+                   
                   }}
                   src={avatar}
                   fill

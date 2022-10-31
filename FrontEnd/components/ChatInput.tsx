@@ -24,7 +24,7 @@ const ChatInput = ({ handleSendMsg }: Props) => {
     let message = msg
     message += emoji.emoji
     setMsg(message)
-    console.log(emoji)
+    
   }
   const sendMsg = (event: SyntheticEvent) => {
     event.preventDefault()

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import type { Contact, User } from '../lib/Types'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -7,10 +7,11 @@ interface Props {
   contacts: Contact[]
   currentUser: User
   changeChat: (chat: Contact) => void
+  currentSelected: number | null
+  setCurrentSelected: Dispatch<SetStateAction<number | null>>
 }
 
-const Contacts = ({ contacts, currentUser, changeChat }: Props) => {
-  const [currentSelected, setCurrentSelected] = useState<number | null>(null)
+const Contacts = ({ contacts, currentUser, changeChat, currentSelected, setCurrentSelected }: Props) => {
   const router = useRouter()
 
   const logOut = () => {
@@ -28,7 +29,7 @@ const Contacts = ({ contacts, currentUser, changeChat }: Props) => {
       <h1 className='text-3xl'>CONTACTS</h1>
       <div className='overflow-y-scroll w-full h-full'>
         <ul className='flex flex-col gap-5 w-full px-5 '>
-          {contacts?.map((contact: Contact, index: number) => {
+          {contacts.map((contact: Contact, index: number) => {
             return (
               <li
                 onClick={() => changeCurrentChat(index, contact)}
@@ -40,7 +41,7 @@ const Contacts = ({ contacts, currentUser, changeChat }: Props) => {
                 key={index}
               >
                 <div className='ml-5 w-10 h-10 relative '>
-                  <Image alt='avatar' src={contact.avatarImage} fill />
+                  <Image src={contact.avatarImage} alt='avatar' width={80} height={80} />
                 </div>
                 <h2 className='text-2xl text-white font-bold'>{contact.username}</h2>
               </li>
@@ -50,9 +51,9 @@ const Contacts = ({ contacts, currentUser, changeChat }: Props) => {
       </div>
       <div className='flex w-full h-32 justify-center items-center bg-slate-700 gap-10'>
         <div className='ml-5 w-20 h-20 relative '>
-          <Image alt='avatar' src={currentUser?.avatarImage} fill />
+          {currentUser.avatarImage ? <Image alt='avatar' src={currentUser.avatarImage} width={80} height={80} /> : null}
         </div>
-        <h3 className='text-3xl text-accent'>{currentUser?.username}</h3>
+        <h3 className='text-3xl text-accent'>{currentUser.username}</h3>
         <button
           className='text-white border-2 px-4 py-2 rounded-3xl cursor-pointer border-accent hover:bg-accent'
           onClick={logOut}
